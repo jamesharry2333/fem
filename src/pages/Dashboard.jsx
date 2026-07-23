@@ -1,0 +1,204 @@
+import { useState, useEffect } from 'react'
+import { useAuth } from '../context/AuthContext.jsx'
+import { supabase } from '../lib/supabase.js'
+
+const statusClass = {
+    Confirmed: 'badge--green',
+    Pending: 'badge--amber',
+    Completed: 'badge--muted',
+    Cancelled: 'badge--muted',
+}
+
+export default function Dashboard() {
+    const { user, profile } = useAuth()
+    const [activeTab, setActiveTab] = useState('upcoming')
+    const [appointments, setAppointments] = useState([])
+    const [apptLoading, setApptLoading] = useState(true)
+    const [apptError, setApptError] = useState('')
+
+    useEffect(() => {
+        if (user) fetchAppointments()
+    }, [user])
+
+    async function fetchAppointments() {
+        setApptLoading(true)
+        setApptError('')
+        const { data, error } = await supabase
+            .from('appointments')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+
+        if (error) {
+            setApptError('Could not load appointments. The "appointments" table may not exist yet — see the setup guide.')
+        } else {
+            setAppointments(data || [])
+        }
+        setApptLoading(false)
+    }
+
+    const upcoming = appointments.filter((a) => ['Pending', 'Confirmed'].includes(a.status))
+    const past = appointments.filter((a) => ['Completed', 'Cancelled'].includes(a.status))
+
+    const name = profile?.name || user?.user_metadata?.name || 'Member'
+    const email = profile?.email || user?.email || ''
+    const joinedAt = profile?.joined_at || profile?.created_at || user?.created_at || new Date().toISOString()
+
+    const initials = name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
+
+    return (
+        <section className="section container dashboard">
+            <aside className="dash-sidebar">
+                <div className="dash-avatar">{initials}</div>
+                <h2 className="dash-name">{name}</h2>
+                <p className="dash-email">{email}</p>
+                <p className="dash-joined">
+                    Member since{' '}
+                    {new Date(joinedAt).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                </p>
+
+                <nav className="dash-nav">
+                    {['upcoming', 'history', 'profile'].map((tab) => (
+                        <button
+                            key={tab}
+                            type="button"
+                            className={`dash-nav__link ${activeTab === tab ? 'dash-nav__link--active' : ''}`}
+                            onClick={() => setActiveTab(tab)}
+                        >
+                            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                        </button>
+                    ))}
+                </nav>
+            </aside>
+
+            <div className="dash-main">
+                {activeTab === 'upcoming' && (
+                    <>
+                        <div className="dash-main__header">
+                            <div>
+                                <p className="eyebrow">Dashboard</p>
+                                <h2>Upcoming appointments</h2>
+                            </div>
+                            <a href="mailto:book@eminktattoo.com" className="btn btn--primary">Book a session</a>
+                        </div>
+
+                        {apptLoading ? (
+                            <div className="dash-empty"><p style={{ margin: 0 }}>Loading appointments…</p></div>
+                        ) : apptError ? (
+                            <div className="dash-empty"><p style={{ margin: 0 }}>{apptError}</p></div>
+                        ) : upcoming.length === 0 ? (
+                            <div className="dash-empty">
+                                <p>No upcoming appointments yet.</p>
+                                <a href="mailto:book@eminktattoo.com" className="btn btn--ghost" style={{ marginTop: '1rem' }}>
+                                    Book your first session
+                                </a>
+                            </div>
+                        ) : (
+                            <div className="appointment-list">
+                                {upcoming.map((appt) => (
+                                    <AppointmentCard key={appt.id} appt={appt} />
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="dash-promo">
+                            <img
+                                src="https://picsum.photos/seed/em-ink-dash/900/300?grayscale"
+                                alt="Studio interior"
+                            />
+                            <div className="dash-promo__overlay" />
+                            <div className="dash-promo__content">
+                                <p className="eyebrow eyebrow--light">Flash day</p>
+                                <p>First Saturday of every month — walk in, walk out marked.</p>
+                            </div>
+                        </div>
+                    </>
+                )}
+
+                {activeTab === 'history' && (
+                    <>
+                        <div className="dash-main__header">
+                            <div>
+                                <p className="eyebrow">Dashboard</p>
+                                <h2>Visit history</h2>
+                            </div>
+                        </div>
+
+                        {apptLoading ? (
+                            <div className="dash-empty"><p style={{ margin: 0 }}>Loading history…</p></div>
+                        ) : past.length === 0 ? (
+                            <div className="dash-empty"><p style={{ margin: 0 }}>No past visits recorded yet.</p></div>
+                        ) : (
+                            <div className="appointment-list">
+                                {past.map((appt) => (
+                                    <AppointmentCard key={appt.id} appt={appt} muted />
+                                ))}
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {activeTab === 'profile' && (
+                    <>
+                        <div className="dash-main__header">
+                            <div>
+                                <p className="eyebrow">Dashboard</p>
+                                <h2>Your profile</h2>
+                            </div>
+                        </div>
+
+                        <div className="profile-grid">
+                            <div className="profile-field">
+                                <span className="profile-field__label">Name</span>
+                                <span className="profile-field__value">{name}</span>
+                            </div>
+                            <div className="profile-field">
+                                <span className="profile-field__label">Email</span>
+                                <span className="profile-field__value">{email}</span>
+                            </div>
+                            <div className="profile-field">
+                                <span className="profile-field__label">Member since</span>
+                                <span className="profile-field__value">
+                                    {new Date(joinedAt).toLocaleDateString('en-GB', {
+                                        day: 'numeric', month: 'long', year: 'numeric',
+                                    })}
+                                </span>
+                            </div>
+                            <div className="profile-field">
+                                <span className="profile-field__label">Total visits</span>
+                                <span className="profile-field__value">{past.length} completed</span>
+                            </div>
+                        </div>
+
+                        <div className="profile-note">
+                            <p style={{ margin: 0 }}>Need to update your details or have a question about your account?</p>
+                            <a href="mailto:hello@eminktattoo.com" className="btn btn--ghost" style={{ marginTop: '0.8rem' }}>
+                                Contact the studio
+                            </a>
+                        </div>
+                    </>
+                )}
+            </div>
+        </section>
+    )
+}
+
+function AppointmentCard({ appt, muted = false }) {
+    const parts = (appt.date || '').split(' ')
+    const day = parts[1]?.replace(',', '') || appt.date
+    const month = parts[0] || ''
+
+    return (
+        <div className={`appointment-card ${muted ? 'appointment-card--muted' : ''}`}>
+            <div className="appointment-card__date-block">
+                <span className="appointment-card__day">{day}</span>
+                <span className="appointment-card__month">{month}</span>
+            </div>
+            <div className="appointment-card__body">
+                <p className="appointment-card__type">{appt.type}</p>
+                <p className="appointment-card__meta">{appt.artist} · {appt.time}</p>
+            </div>
+            <span className={`badge ${statusClass[appt.status] || 'badge--muted'}`}>{appt.status}</span>
+        </div>
+    )
+}
