@@ -55,7 +55,7 @@ export default function Home() {
                             on your skin.
                         </p>
                         <div className="hero__actions">
-                            <Link to="/register" className="btn btn--primary">Book a consultation</Link>
+                            <Link to="/book" className="btn btn--primary">Book a consultation</Link>
                             <Link to="/about" className="btn btn--ghost">Meet the studio</Link>
                         </div>
                         <div className="hero__stats">

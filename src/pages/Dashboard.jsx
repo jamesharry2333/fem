@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { supabase } from '../lib/supabase.js'
 
@@ -11,10 +12,14 @@ const statusClass = {
 
 export default function Dashboard() {
     const { user, profile } = useAuth()
+    const location = useLocation()
+    const successMessage = location.state?.message
+
     const [activeTab, setActiveTab] = useState('upcoming')
     const [appointments, setAppointments] = useState([])
     const [apptLoading, setApptLoading] = useState(true)
     const [apptError, setApptError] = useState('')
+    const [cancellingId, setCancellingId] = useState(null)
 
     useEffect(() => {
         if (user) fetchAppointments()
@@ -27,7 +32,8 @@ export default function Dashboard() {
             .from('appointments')
             .select('*')
             .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
+            .order('date', { ascending: true })
+            .order('time', { ascending: true })
 
         if (error) {
             setApptError('Could not load appointments. The "appointments" table may not exist yet — see the setup guide.')
@@ -35,6 +41,22 @@ export default function Dashboard() {
             setAppointments(data || [])
         }
         setApptLoading(false)
+    }
+
+    async function handleCancel(id) {
+        setCancellingId(id)
+        const { error } = await supabase
+            .from('appointments')
+            .update({ status: 'Cancelled' })
+            .eq('id', id)
+            .eq('user_id', user.id)
+
+        if (!error) {
+            setAppointments((prev) =>
+                prev.map((a) => (a.id === id ? { ...a, status: 'Cancelled' } : a))
+            )
+        }
+        setCancellingId(null)
     }
 
     const upcoming = appointments.filter((a) => ['Pending', 'Confirmed'].includes(a.status))
@@ -72,6 +94,8 @@ export default function Dashboard() {
             </aside>
 
             <div className="dash-main">
+                {successMessage && <p className="form-success">{successMessage}</p>}
+
                 {activeTab === 'upcoming' && (
                     <>
                         <div className="dash-main__header">
@@ -79,7 +103,7 @@ export default function Dashboard() {
                                 <p className="eyebrow">Dashboard</p>
                                 <h2>Upcoming appointments</h2>
                             </div>
-                            <a href="mailto:book@eminktattoo.com" className="btn btn--primary">Book a session</a>
+                            <Link to="/book" className="btn btn--primary">Book a session</Link>
                         </div>
 
                         {apptLoading ? (
@@ -89,14 +113,19 @@ export default function Dashboard() {
                         ) : upcoming.length === 0 ? (
                             <div className="dash-empty">
                                 <p>No upcoming appointments yet.</p>
-                                <a href="mailto:book@eminktattoo.com" className="btn btn--ghost" style={{ marginTop: '1rem' }}>
+                                <Link to="/book" className="btn btn--ghost" style={{ marginTop: '1rem' }}>
                                     Book your first session
-                                </a>
+                                </Link>
                             </div>
                         ) : (
                             <div className="appointment-list">
                                 {upcoming.map((appt) => (
-                                    <AppointmentCard key={appt.id} appt={appt} />
+                                    <AppointmentCard
+                                        key={appt.id}
+                                        appt={appt}
+                                        onCancel={handleCancel}
+                                        cancelling={cancellingId === appt.id}
+                                    />
                                 ))}
                             </div>
                         )}
@@ -183,10 +212,25 @@ export default function Dashboard() {
     )
 }
 
-function AppointmentCard({ appt, muted = false }) {
-    const parts = (appt.date || '').split(' ')
-    const day = parts[1]?.replace(',', '') || appt.date
-    const month = parts[0] || ''
+// Formats a 24-hour "HH:MM" time string (what <input type="time"> saves) as "2:30 PM".
+function formatTime(time) {
+    if (!time) return ''
+    const [hourStr, minuteStr] = time.split(':')
+    const hour = parseInt(hourStr, 10)
+    const period = hour >= 12 ? 'PM' : 'AM'
+    const displayHour = hour % 12 === 0 ? 12 : hour % 12
+    return `${displayHour}:${minuteStr} ${period}`
+}
+
+function AppointmentCard({ appt, muted = false, onCancel, cancelling = false }) {
+    // appt.date is stored as an ISO string (YYYY-MM-DD) from the booking form's
+    // <input type="date">, so we parse it with Date rather than string-splitting.
+    const dateObj = new Date(`${appt.date}T00:00:00`)
+    const validDate = !isNaN(dateObj.getTime())
+    const day = validDate ? dateObj.getDate() : appt.date
+    const month = validDate ? dateObj.toLocaleDateString('en-GB', { month: 'short' }) : ''
+
+    const canCancel = onCancel && ['Pending', 'Confirmed'].includes(appt.status)
 
     return (
         <div className={`appointment-card ${muted ? 'appointment-card--muted' : ''}`}>
@@ -196,9 +240,22 @@ function AppointmentCard({ appt, muted = false }) {
             </div>
             <div className="appointment-card__body">
                 <p className="appointment-card__type">{appt.type}</p>
-                <p className="appointment-card__meta">{appt.artist} · {appt.time}</p>
+                <p className="appointment-card__meta">{appt.artist} · {formatTime(appt.time)}</p>
+                {appt.notes && <p className="appointment-card__notes">{appt.notes}</p>}
             </div>
-            <span className={`badge ${statusClass[appt.status] || 'badge--muted'}`}>{appt.status}</span>
+            <div className="appointment-card__actions">
+                <span className={`badge ${statusClass[appt.status] || 'badge--muted'}`}>{appt.status}</span>
+                {canCancel && (
+                    <button
+                        type="button"
+                        className="btn btn--ghost appointment-card__cancel"
+                        onClick={() => onCancel(appt.id)}
+                        disabled={cancelling}
+                    >
+                        {cancelling ? 'Cancelling…' : 'Cancel'}
+                    </button>
+                )}
+            </div>
         </div>
     )
 }

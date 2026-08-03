@@ -1,22 +1,5 @@
 import { Link } from 'react-router-dom'
-
-const artists = [
-    {
-        name: 'Emeka "Em" Okoye',
-        role: 'Founder · Traditional & Blackwork',
-        img: 'https://picsum.photos/seed/em-ink-artist-1/300/300',
-    },
-    {
-        name: 'Ada Chukwu',
-        role: 'Fine Line & Botanical',
-        img: 'https://picsum.photos/seed/em-ink-artist-2/300/300',
-    },
-    {
-        name: 'Tunde Bello',
-        role: 'Custom Script & Portraiture',
-        img: 'https://picsum.photos/seed/em-ink-artist-3/300/300',
-    },
-]
+import { artists } from '../lib/artists.js'
 
 const values = [
     {
@@ -84,9 +67,9 @@ export default function About() {
                 <div className="cta-band">
                     <div>
                         <h2>Come see the space</h2>
-                        <p>Register for an account and we'll confirm your first consultation slot.</p>
+                        <p>Book a slot online and we'll confirm your first consultation.</p>
                     </div>
-                    <Link to="/register" className="btn btn--primary">Register now</Link>
+                    <Link to="/book" className="btn btn--primary">Book now</Link>
                 </div>
             </section>
         </>

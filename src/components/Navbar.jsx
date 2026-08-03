@@ -50,7 +50,10 @@ export default function Navbar() {
                             <NavLink to="/dashboard" className="nav__link" onClick={closeMenu}>
                                 Dashboard
                             </NavLink>
-                            <button type="button" className="btn btn--primary nav__cta" onClick={handleLogout}>
+                            <NavLink to="/book" className="btn btn--primary nav__cta" onClick={closeMenu}>
+                                Book a slot
+                            </NavLink>
+                            <button type="button" className="btn btn--ghost nav__cta" onClick={handleLogout}>
                                 Log out
                             </button>
                         </>
