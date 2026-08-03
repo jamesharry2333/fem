@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase.js'
 const statusClass = {
     Confirmed: 'badge--green',
     Pending: 'badge--amber',
+    Processing: 'badge--amber',
     Completed: 'badge--muted',
     Cancelled: 'badge--muted',
 }
@@ -59,7 +60,7 @@ export default function Dashboard() {
         setCancellingId(null)
     }
 
-    const upcoming = appointments.filter((a) => ['Pending', 'Confirmed'].includes(a.status))
+    const upcoming = appointments.filter((a) => ['Pending', 'Processing', 'Confirmed'].includes(a.status))
     const past = appointments.filter((a) => ['Completed', 'Cancelled'].includes(a.status))
 
     const name = profile?.name || user?.user_metadata?.name || 'Member'
@@ -230,7 +231,7 @@ function AppointmentCard({ appt, muted = false, onCancel, cancelling = false }) 
     const day = validDate ? dateObj.getDate() : appt.date
     const month = validDate ? dateObj.toLocaleDateString('en-GB', { month: 'short' }) : ''
 
-    const canCancel = onCancel && ['Pending', 'Confirmed'].includes(appt.status)
+    const canCancel = onCancel && ['Pending', 'Processing', 'Confirmed'].includes(appt.status)
 
     return (
         <div className={`appointment-card ${muted ? 'appointment-card--muted' : ''}`}>
@@ -242,6 +243,13 @@ function AppointmentCard({ appt, muted = false, onCancel, cancelling = false }) 
                 <p className="appointment-card__type">{appt.type}</p>
                 <p className="appointment-card__meta">{appt.artist} · {formatTime(appt.time)}</p>
                 {appt.notes && <p className="appointment-card__notes">{appt.notes}</p>}
+                {appt.status === 'Processing' && (
+                    <div className="appointment-card__payment-note">
+                        <p style={{ margin: 0 }}>
+                            {appt.admin_note || "Your booking is confirmed pending payment. We'll send payment details shortly."}
+                        </p>
+                    </div>
+                )}
             </div>
             <div className="appointment-card__actions">
                 <span className={`badge ${statusClass[appt.status] || 'badge--muted'}`}>{appt.status}</span>
