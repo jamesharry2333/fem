@@ -2,20 +2,20 @@
 // Used by both the About page and the Booking form so they never drift apart.
 export const artists = [
     {
-        id: 'em-okoye',
-        name: 'Emeka "Em" Okoye',
+        id: 'True-Mark',
+        name: 'True Mark',
         role: 'Founder · Traditional & Blackwork',
-        img: '/image/fit1.jpg',
+        img: '/image/fit4.jpg',
     },
     {
-        id: 'ada-chukwu',
-        name: 'Ada Chukwu',
+        id: 'D Ink Theory',
+        name: 'D Ink Theory',
         role: 'Fine Line & Botanical',
-        img: '/image/image5.jpeg',
+        img: '/image/fit5.jpeg',
     },
     {
-        id: 'tunde-bello',
-        name: 'Tunde Bello',
+        id: 'tt ink',
+        name: 'TT ink',
         role: 'Custom Script & Portraiture',
         img: '/image/image6.jpeg',
     },
