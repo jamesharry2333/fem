@@ -4,17 +4,17 @@ const styles = [
     {
         name: 'Traditional / Flash',
         desc: 'Bold linework, saturated color, classic imagery built to age well over decades.',
-        img: 'https://picsum.photos/seed/em-ink-traditional/600/450',
+        img: '/image/sample1.jpeg',
     },
     {
         name: 'Fine Line',
         desc: 'Delicate single-needle work — botanicals, script, and minimal portraiture.',
-        img: 'https://picsum.photos/seed/em-ink-fineline/600/450',
+        img: '/image/image2.jpeg',
     },
     {
         name: 'Blackwork',
         desc: 'Heavy saturation, geometric patterning, and large-scale ornamental pieces.',
-        img: 'https://picsum.photos/seed/em-ink-blackwork/600/450',
+        img: '/image/image3.jpg',
     },
 ]
 
@@ -47,7 +47,7 @@ export default function Home() {
             <section className="hero">
                 <div className="container hero__inner">
                     <div className="hero__copy">
-                        <p className="eyebrow">Lagos · Est. 2019</p>
+                        <p className="eyebrow">USA . 2019</p>
                         <h1>Ink that's earned, not rushed.</h1>
                         <p>
                             Em Ink is a private-studio tattoo practice built around custom design, sterile
