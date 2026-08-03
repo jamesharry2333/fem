@@ -13,7 +13,7 @@ const statusClass = {
 
 // Shown on every "Processing" booking, with the price pulled from that booking's row.
 function paymentDetails(appt) {
-    const amount = appt.price != null ? `₦${Number(appt.price).toLocaleString()}` : 'the agreed amount'
+    const amount = appt.price != null ? `$${Number(appt.price).toLocaleString()}` : 'the agreed amount'
     return `Please pay ${amount} to Acc 0123456789 (GTBank, Em Ink Tattoo Studio) to confirm your slot.`
 }
 
