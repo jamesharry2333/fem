@@ -50,7 +50,7 @@ export default function Home() {
                         <p className="eyebrow">USA . 2019</p>
                         <h1>Ink that's earned, not rushed.</h1>
                         <p>
-                            Em Ink is a private-studio tattoo practice built around custom design, sterile
+                            Great Ink is a private-studio tattoo practice built around custom design, sterile
                             process, and artists who'll tell you the truth about what will actually age well
                             on your skin.
                         </p>
