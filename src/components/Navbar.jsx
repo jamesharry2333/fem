@@ -22,7 +22,7 @@ export default function Navbar() {
             <div className="nav__inner container">
                 <NavLink to="/" className="nav__brand" onClick={closeMenu}>
                     <span className="nav__brand-mark">EI</span>
-                    <span className="nav__brand-name">Em Ink</span>
+                    <span className="nav__brand-name">Great Ink</span>
                 </NavLink>
 
                 <button
