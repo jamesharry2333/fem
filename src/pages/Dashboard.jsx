@@ -11,6 +11,12 @@ const statusClass = {
     Cancelled: 'badge--muted',
 }
 
+// Shown on every "Processing" booking, with the price pulled from that booking's row.
+function paymentDetails(appt) {
+    const amount = appt.price != null ? `₦${Number(appt.price).toLocaleString()}` : 'the agreed amount'
+    return `Please pay ${amount} to Acc 0123456789 (GTBank, Em Ink Tattoo Studio) to confirm your slot.`
+}
+
 export default function Dashboard() {
     const { user, profile } = useAuth()
     const location = useLocation()
@@ -245,9 +251,10 @@ function AppointmentCard({ appt, muted = false, onCancel, cancelling = false }) 
                 {appt.notes && <p className="appointment-card__notes">{appt.notes}</p>}
                 {appt.status === 'Processing' && (
                     <div className="appointment-card__payment-note">
-                        <p style={{ margin: 0 }}>
-                            {appt.admin_note || "Your booking is confirmed pending payment. We'll send payment details shortly."}
-                        </p>
+                        <p style={{ margin: 0 }}>{paymentDetails(appt)}</p>
+                        {appt.admin_note && (
+                            <p style={{ margin: '0.4rem 0 0' }}>{appt.admin_note}</p>
+                        )}
                     </div>
                 )}
             </div>
