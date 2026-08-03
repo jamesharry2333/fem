@@ -11,13 +11,13 @@ export const artists = [
         id: 'D Ink Theory',
         name: 'D Ink Theory',
         role: 'Fine Line & Botanical',
-        img: '/image/fit5.jpeg',
+        img: '/image/fit5.jpg',
     },
     {
         id: 'tt ink',
         name: 'TT ink',
         role: 'Custom Script & Portraiture',
-        img: '/image/image6.jpeg',
+        img: '/image/image6.jpg',
     },
 ]
 
