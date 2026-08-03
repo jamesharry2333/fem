@@ -11,12 +11,6 @@ const statusClass = {
     Cancelled: 'badge--muted',
 }
 
-// Shown on every "Processing" booking, with the price pulled from that booking's row.
-function paymentDetails(appt) {
-    const amount = appt.price != null ? `$${Number(appt.price).toLocaleString()}` : 'the agreed amount'
-    return `Please pay ${amount} to Acc 0123456789 (GTBank, Em Ink Tattoo Studio) to confirm your slot.`
-}
-
 export default function Dashboard() {
     const { user, profile } = useAuth()
     const location = useLocation()
@@ -230,14 +224,13 @@ function formatTime(time) {
 }
 
 function AppointmentCard({ appt, muted = false, onCancel, cancelling = false }) {
-    // appt.date is stored as an ISO string (YYYY-MM-DD) from the booking form's
-    // <input type="date">, so we parse it with Date rather than string-splitting.
     const dateObj = new Date(`${appt.date}T00:00:00`)
     const validDate = !isNaN(dateObj.getTime())
     const day = validDate ? dateObj.getDate() : appt.date
     const month = validDate ? dateObj.toLocaleDateString('en-GB', { month: 'short' }) : ''
 
     const canCancel = onCancel && ['Pending', 'Processing', 'Confirmed'].includes(appt.status)
+    const amount = appt.price != null ? `$${Number(appt.price).toLocaleString()}` : 'the agreed amount'
 
     return (
         <div className={`appointment-card ${muted ? 'appointment-card--muted' : ''}`}>
@@ -245,19 +238,49 @@ function AppointmentCard({ appt, muted = false, onCancel, cancelling = false }) 
                 <span className="appointment-card__day">{day}</span>
                 <span className="appointment-card__month">{month}</span>
             </div>
+
             <div className="appointment-card__body">
                 <p className="appointment-card__type">{appt.type}</p>
                 <p className="appointment-card__meta">{appt.artist} · {formatTime(appt.time)}</p>
                 {appt.notes && <p className="appointment-card__notes">{appt.notes}</p>}
+
                 {appt.status === 'Processing' && (
-                    <div className="appointment-card__payment-note">
-                        <p style={{ margin: 0 }}>{paymentDetails(appt)}</p>
-                        {appt.admin_note && (
-                            <p style={{ margin: '0.4rem 0 0' }}>{appt.admin_note}</p>
-                        )}
+                    <div className="appointment-card__payment">
+                        <div className="payment-panel">
+                            <div className="payment-panel__qr">
+                                <img
+                                    src="/image/payment-qr.png"
+                                    alt="Payment QR code"
+                                    className="payment-panel__qr-img"
+                                />
+                            </div>
+
+                            <div className="payment-panel__details">
+                                <p className="payment-panel__label">Payment required to confirm</p>
+                                <p className="payment-panel__amount">{amount}</p>
+
+                                <div className="payment-panel__row">
+                                    <span className="payment-panel__key">Account</span>
+                                    <span className="payment-panel__value">0123456789</span>
+                                </div>
+                                <div className="payment-panel__row">
+                                    <span className="payment-panel__key">Bank</span>
+                                    <span className="payment-panel__value">GTBank</span>
+                                </div>
+                                <div className="payment-panel__row">
+                                    <span className="payment-panel__key">Name</span>
+                                    <span className="payment-panel__value">Em Ink Tattoo Studio</span>
+                                </div>
+
+                                {appt.admin_note && (
+                                    <p className="payment-panel__note">{appt.admin_note}</p>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
+
             <div className="appointment-card__actions">
                 <span className={`badge ${statusClass[appt.status] || 'badge--muted'}`}>{appt.status}</span>
                 {canCancel && (
