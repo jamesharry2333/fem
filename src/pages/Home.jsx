@@ -4,7 +4,7 @@ const styles = [
     {
         name: 'Traditional / Flash',
         desc: 'Bold linework, saturated color, classic imagery built to age well over decades.',
-        img: '/image/sample1.jpeg',
+        img: '/image/sample1.jpg',
     },
     {
         name: 'Fine Line',
