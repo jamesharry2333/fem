@@ -9,7 +9,7 @@ const styles = [
     {
         name: 'Writing',
         desc: 'Delicate single-needle work — botanicals, script, and minimal portraiture.',
-        img: '/image/fit1.jpeg',
+        img: '/image/fit1.jpg',
     },
     {
         name: 'ColourWork',
