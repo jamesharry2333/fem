@@ -2,19 +2,19 @@ import { Link } from 'react-router-dom'
 
 const styles = [
     {
-        name: 'Traditional / Flash',
+        name: 'Leg Sleeve / Flash',
         desc: 'Bold linework, saturated color, classic imagery built to age well over decades.',
-        img: '/image/sample1.jpg',
+        img: '/image/fit3.jpg',
     },
     {
-        name: 'Fine Line',
+        name: 'Writing',
         desc: 'Delicate single-needle work — botanicals, script, and minimal portraiture.',
-        img: '/image/image2.jpeg',
+        img: '/image/fit1.jpeg',
     },
     {
-        name: 'Blackwork',
+        name: 'ColourWork',
         desc: 'Heavy saturation, geometric patterning, and large-scale ornamental pieces.',
-        img: '/image/image3.jpg',
+        img: '/image/fit2.jpg',
     },
 ]
 
