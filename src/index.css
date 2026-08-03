@@ -879,9 +879,6 @@ p {
 }
 
 .appointment-card {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
   background: var(--paper-raised);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -890,6 +887,12 @@ p {
 
 .appointment-card--muted {
   opacity: 0.7;
+}
+
+.appointment-card__row {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
 }
 
 .appointment-card__date-block {
@@ -946,6 +949,66 @@ p {
 .appointment-card__cancel {
   padding: 0.4rem 0.9rem;
   font-size: 0.72rem;
+}
+
+.status-panel {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: var(--radius);
+  border: 1px dashed var(--line-strong);
+}
+
+.status-panel__title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.6rem;
+  color: var(--ink);
+}
+
+.status-panel__row {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  margin: 0 0 0.4rem;
+}
+
+.status-panel__row:last-of-type {
+  margin-bottom: 0;
+}
+
+.status-panel__row a {
+  color: var(--flash-teal);
+  font-weight: 600;
+}
+
+.status-panel__row a:hover {
+  text-decoration: underline;
+}
+
+.status-panel__footnote {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin: 0.6rem 0 0;
+  font-style: italic;
+}
+
+.status-panel--payment {
+  background: rgba(173, 54, 38, 0.06);
+  border-color: var(--flash-red);
+}
+
+.status-panel--payment .status-panel__title {
+  color: var(--flash-red-dark);
+}
+
+.status-panel--confirmed {
+  background: rgba(31, 106, 93, 0.07);
+  border-color: var(--flash-teal);
+}
+
+.status-panel--confirmed .status-panel__title {
+  color: #164f45;
 }
 
 .badge {
@@ -1041,7 +1104,7 @@ p {
 }
 
 @media (max-width: 620px) {
-  .appointment-card {
+  .appointment-card__row {
     flex-wrap: wrap;
   }
 
