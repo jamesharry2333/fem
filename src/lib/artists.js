@@ -5,19 +5,19 @@ export const artists = [
         id: 'em-okoye',
         name: 'Emeka "Em" Okoye',
         role: 'Founder · Traditional & Blackwork',
-        img: 'https://picsum.photos/seed/em-ink-artist-1/300/300',
+        img: '/image/fit1.jpg',
     },
     {
         id: 'ada-chukwu',
         name: 'Ada Chukwu',
         role: 'Fine Line & Botanical',
-        img: 'https://picsum.photos/seed/em-ink-artist-2/300/300',
+        img: '/image/image5.jpeg',
     },
     {
         id: 'tunde-bello',
         name: 'Tunde Bello',
         role: 'Custom Script & Portraiture',
-        img: 'https://picsum.photos/seed/em-ink-artist-3/300/300',
+        img: '/image/image6.jpeg',
     },
 ]
 
