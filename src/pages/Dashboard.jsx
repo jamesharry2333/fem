@@ -249,7 +249,7 @@ function AppointmentCard({ appt, muted = false, onCancel, cancelling = false }) 
                         <div className="payment-panel">
                             <div className="payment-panel__qr">
                                 <img
-                                    src="/image/payment-qr.png"
+                                    src="/image/cashapp1.png"
                                     alt="Payment QR code"
                                     className="payment-panel__qr-img"
                                 />
