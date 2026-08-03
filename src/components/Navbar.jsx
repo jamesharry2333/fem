@@ -38,12 +38,16 @@ export default function Navbar() {
                 </button>
 
                 <nav className={`nav__links ${open ? 'nav__links--open' : ''}`}>
-                    <NavLink to="/" className="nav__link" onClick={closeMenu} end>
-                        Home
-                    </NavLink>
-                    <NavLink to="/about" className="nav__link" onClick={closeMenu}>
-                        About
-                    </NavLink>
+                    {!user && (
+                        <>
+                            <NavLink to="/" className="nav__link" onClick={closeMenu} end>
+                                Home
+                            </NavLink>
+                            <NavLink to="/about" className="nav__link" onClick={closeMenu}>
+                                About
+                            </NavLink>
+                        </>
+                    )}
 
                     {user ? (
                         <>
